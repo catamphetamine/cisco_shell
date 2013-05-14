@@ -1,6 +1,5 @@
 require './language'
 Secure_shell = require './secure shell'
-disk = require './disk'
 
 module.exports = (options) ->
 	decorator = '==================================================================='
