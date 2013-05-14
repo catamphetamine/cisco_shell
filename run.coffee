@@ -1,4 +1,4 @@
-cisco_shell = require './cisco_shell'
+cisco_shell = require './cisco shell'
 
 # coffee
 process.argv.shift()
@@ -23,5 +23,5 @@ ssh_options =
 	username: options.user
 	password: options.password
 	host: options.device
-	
+
 cisco_shell(ssh_options)

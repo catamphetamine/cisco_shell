@@ -49,3 +49,9 @@ RegExp.escape = (string) ->
 String.prototype.replace_all = (what, with_what) ->
 	regexp = new RegExp(RegExp.escape(what), "g")
 	return @replace(regexp, with_what)
+	
+Array.prototype.is_empty = ->
+	return @length == 0
+	
+String.prototype.has = (what) ->
+	return @indexOf(what) >= 0
