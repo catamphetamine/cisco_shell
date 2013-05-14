@@ -168,10 +168,9 @@ module.exports = (options) ->
 	options.output = (output, command) ->
 		if command != 'terminal length 0'
 			console.log(decorator)
-			console.log('Executing command: ' + command)
+			console.log('> ' + command)
 			if output
 				console.log(decorator)
-				console.log('Output:')
 				console.log(output)
 		return yes
 		
