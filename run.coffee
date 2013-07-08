@@ -23,5 +23,6 @@ ssh_options =
 	username: options.user
 	password: options.password
 	host: options.device
+	parameters: { interface: 'GigabitEthernet0/0' }
 
 cisco_shell(ssh_options)

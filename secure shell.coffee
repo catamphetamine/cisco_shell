@@ -31,6 +31,9 @@ class Secure_shell
 					
 			console.log('Connection :: close')
 			
+			if options.end?
+				options.end()
+			
 		@ssh.connect(@options)
 	
 	result: (callback) ->

@@ -4,6 +4,8 @@ Secure_shell = require './secure shell'
 module.exports = (options) ->
 	decorator = '==================================================================='
 
+	options.script_path = options.script_path || './script'
+	
 	secure_shell = null
 	
 	options.connected = ->
@@ -29,7 +31,7 @@ module.exports = (options) ->
 			next()
 					
 		global.$ 'terminal length 0', ->
-			require './script'
+			require(options.script_path)(options.parameters)
 	
 	options.output = (output, command) ->
 		if command != 'terminal length 0'
@@ -60,6 +62,9 @@ module.exports = (options) ->
 			console.log('Couldn\'t connect. It happens from time to time.')
 					
 		console.log(decorator)
+		
+		if options.error?
+			options.error()
 		
 	options.ends_with_command_prompt = (text) ->
 		expression = new RegExp(RegExp.escape(@hostname) + '(\((.+)\))?' + '#', 'g')
