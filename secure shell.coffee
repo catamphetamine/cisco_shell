@@ -52,6 +52,8 @@ class Secure_shell
 	execute: (command, output) ->
 		shell = @
 		
+		command = command.trim()
+		
 		@command = command
 		@command_output = ''
 		
