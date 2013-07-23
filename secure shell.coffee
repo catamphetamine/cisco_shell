@@ -80,7 +80,7 @@ class Secure_shell
 			
 			stream.on 'data', (data, extended) ->
 				#console.log('Stream :: data')
-					
+				
 				data = (data + '')
 				
 				shell.command_output += data

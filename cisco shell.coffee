@@ -67,6 +67,9 @@ module.exports = (options) ->
 			options.error()
 		
 	options.ends_with_command_prompt = (text) ->
+		if text.ends_with(' [yes/no]: ')
+			return text
+	 
 		expression = new RegExp(RegExp.escape(@hostname) + '(\((.+)\))?' + '#', 'g')
 		found = text.match(expression)
 		
