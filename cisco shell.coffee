@@ -7,20 +7,14 @@ module.exports = (options) ->
 	options.script_path = options.script_path || './script'
 	
 	secure_shell = null
+	end = () -> secure_shell.end()	
 	
 	options.connected = ->
-		global.$ = (command, output) ->
-			output = output || (() -> secure_shell.end())
-			secure_shell.execute(command, output) # .bind_await(secure_shell)
+		global.$ = (command, callback) ->
+			secure_shell.execute(command, callback || end) # .bind_await(secure_shell)
 	
 		global.$$ = (commands, callback) ->
-			finish = ->
-				if not callback?
-					return secure_shell.end()
-			
-				result = callback()
-				if result == no
-					secure_shell.end()
+			finish = callback || end
 		
 			next = ->
 				if commands.is_empty()
@@ -31,10 +25,11 @@ module.exports = (options) ->
 			next()
 					
 		global.$ 'terminal length 0', ->
-			require(options.script_path)(options.parameters)
+			global.$ 'terminal width 0', ->
+				require(options.script_path)(options.parameters, end)
 	
 	options.output = (output, command) ->
-		if command != 'terminal length 0'
+		if command != 'terminal length 0' && command != 'terminal width 0'
 			console.log(decorator)
 			console.log('> ' + command)
 			if output
