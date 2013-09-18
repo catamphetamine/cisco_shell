@@ -55,3 +55,9 @@ Array.prototype.is_empty = ->
 	
 String.prototype.has = (what) ->
 	return @indexOf(what) >= 0
+
+Array.prototype.clone = ->	
+	return @slice(0)
+	
+Array.prototype.has = (what) ->
+	return @indexOf(what) >= 0

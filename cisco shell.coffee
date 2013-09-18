@@ -1,6 +1,8 @@
 require './language'
 Secure_shell = require './secure shell'
 
+preliminary_commands = ['terminal length 0', 'terminal width 0']
+
 module.exports = (options) ->
 	decorator = '==================================================================='
 
@@ -9,9 +11,16 @@ module.exports = (options) ->
 	secure_shell = null
 	end = () -> secure_shell.end()	
 	
+	execute = (command, callback) ->
+		if !preliminary_commands.has(command)
+			console.log(decorator)
+			console.log('> ' + command)
+				
+		secure_shell.execute(command, callback)
+	
 	options.connected = ->
 		global.$ = (command, callback) ->
-			secure_shell.execute(command, callback || end) # .bind_await(secure_shell)
+			execute(command, callback || end)
 	
 		global.$$ = (commands, callback) ->
 			finish = callback || end
@@ -20,18 +29,22 @@ module.exports = (options) ->
 				if commands.is_empty()
 					return finish()
 			
-				secure_shell.execute(commands.shift(), next)
+				execute(commands.shift(), next)
 				
 			next()
-					
-		global.$ 'terminal length 0', ->
-			global.$ 'terminal width 0', ->
-				require(options.script_path)(options.parameters, end)
+		
+		commands = preliminary_commands.clone()
+		
+		prepare = ->
+			if commands.is_empty()
+				return require(options.script_path)(options.parameters, end)
+			
+			global.$(commands.shift(), prepare)
+		
+		prepare()
 	
 	options.output = (output, command) ->
-		if command != 'terminal length 0' && command != 'terminal width 0'
-			console.log(decorator)
-			console.log('> ' + command)
+		if !preliminary_commands.has(command)
 			if output
 				console.log(decorator)
 				console.log(output)
@@ -65,8 +78,18 @@ module.exports = (options) ->
 		if text.ends_with(' [yes/no]: ')
 			return text
 	 
-		expression = new RegExp(RegExp.escape(@hostname) + '(\((.+)\))?' + '#', 'g')
-		found = text.match(expression)
+		max_hostname_length = @hostname.length
+		found = null
+		
+		while max_hostname_length > 0
+			expression = new RegExp(RegExp.escape(@hostname.substring(0, max_hostname_length)) + '(\((.+)\))?' + '#', 'g')
+			
+			found = text.match(expression)
+			
+			if found?
+				break
+				
+			max_hostname_length--
 		
 		if not found?
 			return
@@ -75,7 +98,11 @@ module.exports = (options) ->
 		
 		if not text.ends_with(marker)
 			return
-			
+
+		# max marker length is hardcoded into cisco
+		if text.length < 30
+			return
+		
 		return text.substring(0, text.length - marker.length)
 	
 	secure_shell = new Secure_shell(options)
