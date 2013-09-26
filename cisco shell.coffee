@@ -98,10 +98,6 @@ module.exports = (options) ->
 		
 		if not text.ends_with(marker)
 			return
-
-		# max marker length is hardcoded into cisco
-		if text.length < 30
-			return
 		
 		return text.substring(0, text.length - marker.length)
 	
